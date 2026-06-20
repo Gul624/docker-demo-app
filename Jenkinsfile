@@ -1,24 +1,25 @@
-pipeline{
-    agent any
-     environment {
+pipeline {
+    agent {
+        any {
+            args '-u root' // Это даст Jenkins права root внутри контейнера, и сокет прочитается
+        }
+    }
+    environment {
         DOCKER_IMAGE = 'docker-demo-app'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
-}
+    }
     stages {
         stage('Checkout') {
             steps {
                 script {
-                   checkout scm
+                    checkout scm
                 }
             }
         }
         stage('Build Docker Image') {
             steps {
-                script {
-                   sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                }
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
-        
     }
 }
